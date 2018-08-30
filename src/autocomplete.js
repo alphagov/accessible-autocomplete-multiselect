@@ -48,6 +48,8 @@ export default class Autocomplete extends Component {
     showNoOptionsFound: true,
     showAllValues: false,
     required: false,
+    multiple: false,
+    selectedOptions: {},
     tNoResults: () => 'No results found',
     tAssistiveHint: () => 'When autocomplete results are available use up and down arrows to review and enter to select.  Touch device users, explore by touch or with swipe gestures.',
     dropdownArrow: DropdownArrowDown,
@@ -64,6 +66,7 @@ export default class Autocomplete extends Component {
       hovered: null,
       menuOpen: false,
       options: props.defaultValue ? [props.defaultValue] : [],
+      selectedOptions: props.selectedOptions ? [props.selectedOptions] : [],
       query: props.defaultValue,
       validChoiceMade: false,
       selected: null,
@@ -82,8 +85,10 @@ export default class Autocomplete extends Component {
     this.handleOptionBlur = this.handleOptionBlur.bind(this)
     this.handleOptionClick = this.handleOptionClick.bind(this)
     this.handleOptionFocus = this.handleOptionFocus.bind(this)
-    this.handleOptionMouseDown = this.handleOptionMouseDown.bind(this)
     this.handleOptionMouseEnter = this.handleOptionMouseEnter.bind(this)
+
+    this.handleSelectedOptionClick = this.handleSelectedOptionClick.bind(this)
+    this.handleSelectedOptionKeyDown = this.handleSelectedOptionKeyDown.bind(this)
 
     this.handleInputBlur = this.handleInputBlur.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
@@ -174,6 +179,15 @@ export default class Autocomplete extends Component {
       selected: null,
       validChoiceMade: this.isQueryAnOption(newQuery, options)
     })
+
+    if (this.props.selectElement && this.props.selectElement.multiple) {
+      // Reset input state
+      this.setState({
+        menuOpen: false,
+        selected: null,
+        query: ''
+      })
+    }
   }
 
   handleListMouseLeave (event) {
@@ -288,17 +302,52 @@ export default class Autocomplete extends Component {
       selected: -1,
       validChoiceMade: true
     })
+    if (this.props.selectElement && this.props.selectElement.multiple) {
+      this.updateMultiselect(selectedOption)
+    }
     this.forceUpdate()
   }
 
-  handleOptionMouseDown (event) {
-    // Safari triggers focusOut before click, but if you
-    // preventDefault on mouseDown, you can stop that from happening.
-    // If this is removed, clicking on an option in Safari will trigger
-    // `handleOptionBlur`, which closes the menu, and the click will
-    // trigger on the element underneath instead.
-    // See: http://stackoverflow.com/questions/7621711/how-to-prevent-blur-running-when-clicking-a-link-in-jquery
-    event.preventDefault()
+  updateMultiselect (selectedOption) {
+    if (selectedOption) {
+      // Update select state for option
+      const addedSelectOption = [].filter.call(this.props.selectElement.options, option => option.textContent === selectedOption)[0]
+      if (addedSelectOption) { addedSelectOption.setAttribute('selected', '') }
+
+      // Update multiselect list
+      let availableOptions = [].filter.call(this.props.selectElement.options, option => option.textContent)
+      this.props.selectedOptions = availableOptions.filter(option => option.hasAttribute('selected'))
+
+      // Reset input state
+      this.setState({
+        menuOpen: false,
+        selected: null,
+        query: ''
+      })
+    }
+  }
+
+  handleSelectedOptionClick (event, index) {
+    // Remove from the list
+    const removedOption = this.props.selectedOptions[index]
+    this.props.selectedOptions = this.props.selectedOptions.filter(e => e !== removedOption)
+
+    // Update select state for option
+    const removedSelectOption = [].filter.call(this.props.selectElement.options, option => option.textContent === removedOption.textContent)[0]
+    if (removedSelectOption) { removedSelectOption.removeAttribute('selected') }
+
+    this.forceUpdate()
+  }
+
+  handleSelectedOptionKeyDown (event, index) {
+    switch (keyCodes[event.keyCode]) {
+      case 'space':
+        this.handleSelectedOptionClick(event, index)
+        break
+      case 'enter':
+        this.handleSelectedOptionClick(event, index)
+        break
+    }
   }
 
   handleUpArrow (event) {
@@ -410,6 +459,7 @@ export default class Autocomplete extends Component {
       name,
       placeholder,
       required,
+      multiple,
       showAllValues,
       tNoResults,
       tStatusQueryTooShort,
@@ -445,6 +495,8 @@ export default class Autocomplete extends Component {
     const menuModifierVisibility = `${menuClassName}--${(menuIsVisible) ? 'visible' : 'hidden'}`
 
     const optionClassName = `${cssNamespace}__option`
+
+    const selectedOptionsClassName = `${cssNamespace}__list`
 
     const hintClassName = `${cssNamespace}__hint`
     const selectedOptionText = this.templateInputValue(options[selected])
@@ -542,7 +594,6 @@ export default class Autocomplete extends Component {
                 key={index}
                 onBlur={(event) => this.handleOptionBlur(event, index)}
                 onClick={(event) => this.handleOptionClick(event, index)}
-                onMouseDown={this.handleOptionMouseDown}
                 onMouseEnter={(event) => this.handleOptionMouseEnter(event, index)}
                 ref={(optionEl) => { this.elementReferences[index] = optionEl }}
                 role='option'
@@ -558,8 +609,38 @@ export default class Autocomplete extends Component {
           )}
         </ul>
 
+<<<<<<< HEAD
         <span id={assistiveHintID} style={{ display: 'none' }}>{tAssistiveHint()}</span>
 
+=======
+        {multiple && (
+          <ul
+            className={`${selectedOptionsClassName}`}
+            id={`${id}__list`}
+            role='listbox'
+          >
+            {this.props.selectedOptions.map((option, index) => {
+              return (
+                <li
+                  aria-selected='true'
+                  className={`${optionClassName}`}
+                  dangerouslySetInnerHTML={{ __html: `<span class="autocomplete__remove-option">&times;</span> ` + this.templateSuggestion(option.textContent) }}
+                  id={`${id}__option--${index}`}
+                  key={index}
+                  onClick={(event) => this.handleSelectedOptionClick(event, index)}
+                  onKeyDown={(event) => this.handleSelectedOptionKeyDown(event, index)}
+                  role='option'
+                  tabIndex='0'
+                />
+              )
+            })}
+
+            {showNoOptionsFound && (
+              <li className={`${optionClassName} ${optionClassName}--no-results`}>{tNoResults()}</li>
+            )}
+          </ul>
+        )}
+>>>>>>> cc0a8a2 (Add multiselect support)
       </div>
     )
   }
