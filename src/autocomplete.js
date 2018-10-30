@@ -38,6 +38,7 @@ export default class Autocomplete extends Component {
   static defaultProps = {
     autoselect: false,
     cssNamespace: 'autocomplete',
+    customAttributes: {},
     defaultValue: '',
     displayMenu: 'inline',
     minLength: 0,
@@ -468,6 +469,7 @@ export default class Autocomplete extends Component {
       tStatusResults,
       tAssistiveHint,
       dropdownArrow: dropdownArrowFactory,
+      customAttributes,
       menuAttributes
     } = this.props
     const { focused, hovered, menuOpen, options, query, selected, ariaHint, validChoiceMade } = this.state
@@ -564,6 +566,7 @@ export default class Autocomplete extends Component {
           role='combobox'
           required={required}
           value={query}
+          {...customAttributes}
         />
 
         {dropdownArrow}
@@ -609,10 +612,8 @@ export default class Autocomplete extends Component {
           )}
         </ul>
 
-<<<<<<< HEAD
         <span id={assistiveHintID} style={{ display: 'none' }}>{tAssistiveHint()}</span>
 
-=======
         {multiple && (
           <ul
             className={`${selectedOptionsClassName}`}
@@ -640,7 +641,6 @@ export default class Autocomplete extends Component {
             )}
           </ul>
         )}
->>>>>>> cc0a8a2 (Add multiselect support)
       </div>
     )
   }
