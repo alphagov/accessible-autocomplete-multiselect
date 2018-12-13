@@ -53,8 +53,9 @@ export default class Autocomplete extends Component {
     selectedOptions: {},
     tNoResults: () => 'No results found',
     tAssistiveHint: () => 'When autocomplete results are available use up and down arrows to review and enter to select.  Touch device users, explore by touch or with swipe gestures.',
+    tSelectedOptionDescription: () => 'press Enter or Space to remove selection',
     dropdownArrow: DropdownArrowDown,
-    menuAttributes: {}
+    menuAttributes: {},
   }
 
   elementReferences = {}
@@ -468,6 +469,7 @@ export default class Autocomplete extends Component {
       tStatusSelectedOption,
       tStatusResults,
       tAssistiveHint,
+      tSelectedOptionDescription,
       dropdownArrow: dropdownArrowFactory,
       customAttributes,
       menuAttributes
@@ -624,8 +626,10 @@ export default class Autocomplete extends Component {
               return (
                 <li
                   aria-selected='true'
+                  aria-label={`${this.templateSuggestion(option.textContent)}, selected`}
+                  aria-describedBy={`${id}__list-item-description`}
                   className={`${optionClassName}`}
-                  dangerouslySetInnerHTML={{ __html: `<span class="autocomplete__remove-option">&times;</span> ` + this.templateSuggestion(option.textContent) }}
+                  dangerouslySetInnerHTML={{ __html: this.templateSuggestion(option.textContent) }}
                   id={`${id}__option--${index}`}
                   key={index}
                   onClick={(event) => this.handleSelectedOptionClick(event, index)}
@@ -635,11 +639,13 @@ export default class Autocomplete extends Component {
                 />
               )
             })}
-
             {showNoOptionsFound && (
               <li className={`${optionClassName} ${optionClassName}--no-results`}>{tNoResults()}</li>
             )}
           </ul>
+        )}
+        {multiple && (
+          <span class='autocomplete__list-item-description' id={`${id}__list-item-description`}>{tSelectedOptionDescription()}</span>
         )}
       </div>
     )
