@@ -45,15 +45,18 @@ export default class Autocomplete extends Component {
     name: 'input-autocomplete',
     placeholder: '',
     onConfirm: () => {},
+    onRemove: () => {},
     confirmOnBlur: true,
     showNoOptionsFound: true,
     showAllValues: false,
     required: false,
     multiple: false,
-    selectedOptions: {},
+    selectedOptions: [],
     tNoResults: () => 'No results found',
     dropdownArrow: DropdownArrowDown,
-    menuAttributes: {}
+    menuAttributes: {},
+    tAssistiveHint: () => 'When autocomplete results are available use up and down arrows to review and enter to select.  Touch device users, explore by touch or with swipe gestures.',
+    tSelectedOptionDescription: () => 'Press Enter or Space to remove selection'
   }
 
   elementReferences = {}
@@ -66,7 +69,7 @@ export default class Autocomplete extends Component {
       hovered: null,
       menuOpen: false,
       options: props.defaultValue ? [props.defaultValue] : [],
-      selectedOptions: props.selectedOptions ? [props.selectedOptions] : [],
+      selectedOptions: props.selectedOptions,
       query: props.defaultValue,
       validChoiceMade: false,
       selected: null,
@@ -87,8 +90,7 @@ export default class Autocomplete extends Component {
     this.handleOptionFocus = this.handleOptionFocus.bind(this)
     this.handleOptionMouseEnter = this.handleOptionMouseEnter.bind(this)
 
-    this.handleSelectedOptionClick = this.handleSelectedOptionClick.bind(this)
-    this.handleSelectedOptionKeyDown = this.handleSelectedOptionKeyDown.bind(this)
+    this.handleRemoveSelectedOptionClick = this.handleRemoveSelectedOptionClick.bind(this)
 
     this.handleInputBlur = this.handleInputBlur.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
@@ -163,6 +165,16 @@ export default class Autocomplete extends Component {
     return suggestionTemplate ? suggestionTemplate(value) : value
   }
 
+  resetInput () {
+    this.setState({
+      focused: null,
+      clicked: null,
+      menuOpen: false,
+      selected: null,
+      query: ''
+    })
+  }
+
   handleComponentBlur (newState) {
     const { options, query, selected } = this.state
     let newQuery
@@ -172,20 +184,17 @@ export default class Autocomplete extends Component {
     } else {
       newQuery = query
     }
-    this.setState({
-      focused: null,
-      menuOpen: newState.menuOpen || false,
-      query: newQuery,
-      selected: null,
-      validChoiceMade: this.isQueryAnOption(newQuery, options)
-    })
 
-    if (this.props.selectElement && this.props.selectElement.multiple) {
-      // Reset input state
+    if (this.props.multiple) {
+      this.resetInput()
+    } else {
       this.setState({
-        menuOpen: false,
+        focused: null,
+        clicked: null,
+        menuOpen: newState.menuOpen || false,
+        query: newQuery,
         selected: null,
-        query: ''
+        validChoiceMade: this.isQueryAnOption(newQuery, options),
       })
     }
   }
@@ -294,59 +303,37 @@ export default class Autocomplete extends Component {
     const selectedOption = this.state.options[index]
     const newQuery = this.templateInputValue(selectedOption)
     this.props.onConfirm(selectedOption)
-    this.setState({
-      focused: -1,
-      hovered: null,
-      menuOpen: false,
-      query: newQuery,
-      selected: -1,
-      validChoiceMade: true
-    })
-    if (this.props.selectElement && this.props.selectElement.multiple) {
-      this.updateMultiselect(selectedOption)
-    }
-    this.forceUpdate()
-  }
 
-  updateMultiselect (selectedOption) {
-    if (selectedOption) {
-      // Update select state for option
-      const addedSelectOption = [].filter.call(this.props.selectElement.options, option => option.textContent === selectedOption)[0]
-      if (addedSelectOption) { addedSelectOption.selected = true }
-
-      // Update multiselect list
-      let availableOptions = [].filter.call(this.props.selectElement.options, option => option.textContent)
-      this.props.selectedOptions = availableOptions.filter(option => option.selected === true)
-
-      // Reset input state
+    if (this.props.multiple) {
+      this.resetInput()
+      if (this.state.selectedOptions.indexOf(selectedOption) === -1) {
+        this.setState({
+          selectedOptions: this.state.selectedOptions.concat([selectedOption])
+        })
+      }
+    } else {
       this.setState({
+        focused: -1,
+        hovered: null,
         menuOpen: false,
-        selected: null,
-        query: ''
+        query: newQuery,
+        selected: -1,
+        validChoiceMade: true
       })
     }
   }
 
-  handleSelectedOptionClick (event, index) {
-    // Remove from the list
-    const removedOption = this.props.selectedOptions[index]
-    this.props.selectedOptions = this.props.selectedOptions.filter(e => e !== removedOption)
+  handleRemoveSelectedOptionClick (event, index) {
+    const selectedOptions = this.state.selectedOptions
+    const toRemove = selectedOptions[index]
+    if (toRemove) {
+      const newSelectedOptions = selectedOptions.filter(o => o !== toRemove)
 
-    // Update select state for option
-    const removedSelectOption = [].filter.call(this.props.selectElement.options, option => option.textContent === removedOption.textContent)[0]
-    if (removedSelectOption) { removedSelectOption.selected = false }
+      this.setState({
+        selectedOptions: newSelectedOptions
+      })
 
-    this.forceUpdate()
-  }
-
-  handleSelectedOptionKeyDown (event, index) {
-    switch (keyCodes[event.keyCode]) {
-      case 'space':
-        this.handleSelectedOptionClick(event, index)
-        break
-      case 'enter':
-        this.handleSelectedOptionClick(event, index)
-        break
+      this.props.onRemove(toRemove)
     }
   }
 
@@ -472,7 +459,7 @@ export default class Autocomplete extends Component {
       customAttributes,
       menuAttributes
     } = this.props
-    const { focused, hovered, menuOpen, options, query, selected, ariaHint, validChoiceMade } = this.state
+    const { focused, hovered, menuOpen, options, query, selected, selectedOptions, ariaHint, validChoiceMade } = this.state
     const autoselect = this.hasAutoselect()
 
     const inputFocused = focused === -1
@@ -620,15 +607,15 @@ export default class Autocomplete extends Component {
             id={`${id}__list`}
             role='listbox'
           >
-            {this.props.selectedOptions.map((option, index) => {
+            {selectedOptions.map((option, index) => {
               return (
                 <li id={`${id}__option--${index}`} className='autocomplete__selected-option'>
-                  <span dangerouslySetInnerHTML={{ __html: this.templateSuggestion(option.textContent) }} />
+                  <span dangerouslySetInnerHTML={{ __html: this.templateSuggestion(option) }} />
                   <button
                     type='button'
                     className='autocomplete__remove-option'
-                    aria-label={`${this.templateSuggestion(option.textContent)}, selected. ${tSelectedOptionDescription()}`}
-                    onClick={(event) => this.handleSelectedOptionClick(event, index)}>remove</button>
+                    aria-label={`${this.templateSuggestion(option)}, selected. ${tSelectedOptionDescription()}`}
+                    onClick={(event) => this.handleRemoveSelectedOptionClick(event, index)}>remove</button>
                 </li>
               )
             })}
