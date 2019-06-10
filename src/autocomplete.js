@@ -72,8 +72,8 @@ export default class Autocomplete extends Component {
       options: props.defaultValue ? [props.defaultValue] : [],
       selectedOptions: props.selectedOptions,
       query: props.defaultValue,
+      selected: props.defaultValue,
       validChoiceMade: false,
-      selected: null,
       ariaHint: true
     }
 
@@ -195,7 +195,7 @@ export default class Autocomplete extends Component {
         menuOpen: newState.menuOpen || false,
         query: newQuery,
         selected: null,
-        validChoiceMade: this.isQueryAnOption(newQuery, options),
+        validChoiceMade: this.isQueryAnOption(newQuery, options)
       })
     }
   }
@@ -262,7 +262,8 @@ export default class Autocomplete extends Component {
     } else if (queryEmpty || !queryLongEnough) {
       this.setState({
         menuOpen: false,
-        options: []
+        options: [],
+        selected: null
       })
     }
   }
@@ -318,7 +319,7 @@ export default class Autocomplete extends Component {
         menuOpen: false,
         query: newQuery,
         validChoiceMade: true,
-        selected: null
+        selected: index
       })
     }
   }
