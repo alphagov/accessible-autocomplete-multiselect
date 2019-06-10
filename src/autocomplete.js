@@ -253,8 +253,8 @@ export default class Autocomplete extends Component {
         this.setState({
           menuOpen: optionsAvailable,
           options,
-          selected: (autoselect && optionsAvailable) ? 0 : -1,
-          validChoiceMade: false
+          validChoiceMade: false,
+          selected: (autoselect && optionsAvailable) ? 0 : null
         })
       })
     } else if (queryEmpty || !queryLongEnough) {
@@ -317,8 +317,8 @@ export default class Autocomplete extends Component {
         hovered: null,
         menuOpen: false,
         query: newQuery,
-        selected: -1,
-        validChoiceMade: true
+        validChoiceMade: true,
+        selected: null
       })
     }
   }
@@ -340,10 +340,16 @@ export default class Autocomplete extends Component {
   handleUpArrow (event) {
     event.preventDefault()
     const { menuOpen, selected } = this.state
-    const isNotAtTop = selected !== -1
-    const allowMoveUp = isNotAtTop && menuOpen
-    if (allowMoveUp) {
+    if (!menuOpen) { return }
+
+    const hasOptions = selected && selected > 0
+    if (hasOptions) {
       this.handleOptionFocus(selected - 1)
+    } else {
+      this.setState({
+        focused: -1,
+        selected: null
+      })
     }
   }
 
@@ -362,11 +368,10 @@ export default class Autocomplete extends Component {
         })
       })
     } else if (this.state.menuOpen === true) {
-      const { menuOpen, options, selected } = this.state
-      const isNotAtBottom = selected !== options.length - 1
-      const allowMoveDown = isNotAtBottom && menuOpen
-      if (allowMoveDown) {
-        this.handleOptionFocus(selected + 1)
+      const { options, selected } = this.state
+      const isAtBottom = selected === options.length - 1
+      if (!isAtBottom) {
+        this.handleOptionFocus(selected === null ? 0 : selected + 1)
       }
     }
   }
@@ -390,11 +395,12 @@ export default class Autocomplete extends Component {
   }
 
   handleEnter (event) {
-    if (this.state.menuOpen) {
+    const { menuOpen, selected } = this.state
+    if (menuOpen) {
       event.preventDefault()
-      const hasSelectedOption = this.state.selected >= 0
+      const hasSelectedOption = selected !== null && selected > -1
       if (hasSelectedOption) {
-        this.handleOptionClick(event, this.state.selected)
+        this.handleOptionClick(event, selected)
       }
     }
   }
