@@ -234,114 +234,52 @@ describe('Autocomplete', () => {
     })
 
     describe('focusing input', () => {
-      describe('when no query is present', () => {
-        it('does not display menu', () => {
-          autocomplete.setState({ query: '' })
-          autocomplete.handleInputFocus()
-          expect(autocomplete.state.menuOpen).to.equal(false)
-          expect(autocomplete.state.focused).to.equal(-1)
-        })
-      })
-
-      describe('when a non-matched query is present (no matching options are present)', () => {
-        it('does not display menu', () => {
-          autocomplete.setState({ query: 'f' })
-          autocomplete.handleInputFocus()
-          expect(autocomplete.state.menuOpen).to.equal(false)
-          expect(autocomplete.state.focused).to.equal(-1)
-        })
-      })
-
-      describe('when a matched query is present (matching options exist)', () => {
-        describe('and no user choice has yet been made', () => {
-          it('displays menu', () => {
-            autocomplete.setState({
-              menuOpen: false,
-              options: ['France'],
-              query: 'fr',
-              focused: null,
-              selected: null,
-              validChoiceMade: false
-            })
-            autocomplete.handleInputFocus()
-            expect(autocomplete.state.focused).to.equal(-1)
-            expect(autocomplete.state.menuOpen).to.equal(true)
-            expect(autocomplete.state.selected).to.equal(-1)
-          })
-        })
-        describe('and a user choice HAS been made', () => {
-          it('does not display menu', () => {
-            autocomplete.setState({
-              menuOpen: false,
-              options: ['France'],
-              query: 'fr',
-              focused: null,
-              selected: null,
-              validChoiceMade: true
-            })
-            autocomplete.handleInputFocus()
-            expect(autocomplete.state.focused).to.equal(-1)
-            expect(autocomplete.state.menuOpen).to.equal(false)
-          })
-        })
-      })
-
-      describe('with option selected', () => {
-        it('leaves menu open, does not change query', () => {
-          autocomplete.setState({ menuOpen: true, options: ['France'], query: 'fr', focused: 0, selected: 0 })
-          autocomplete.handleInputFocus()
-          expect(autocomplete.state.focused).to.equal(-1)
-          expect(autocomplete.state.menuOpen).to.equal(true)
-          expect(autocomplete.state.query).to.equal('fr')
-        })
-      })
-
-      describe('with defaultValue', () => {
-        beforeEach(() => {
-          autocomplete = new Autocomplete({
-            ...Autocomplete.defaultProps,
-            defaultValue: 'France',
-            id: 'test',
-            source: suggest
-          })
-        })
-
-        it('is prefilled', () => {
-          expect(autocomplete.state.options.length).to.equal(1)
-          expect(autocomplete.state.options[0]).to.equal('France')
-          expect(autocomplete.state.query).to.equal('France')
-        })
+      it('focuses input and unfocuses the focused option', () => {
+        autocomplete.handleInputFocus()
+        expect(autocomplete.state.inputFocused).to.equal(true)
+        expect(autocomplete.state.optionFocused).to.equal(null)
       })
     })
 
     describe('blurring input', () => {
-      it('unfocuses component', () => {
-        autocomplete.setState({ menuOpen: true, options: ['France'], query: 'fr', focused: -1, selected: null })
+      it('unfocuses component', (done) => {
+        autocomplete.setState({ menuOpen: true, options: ['France'], query: 'fr', inputFocused: true, selected: null })
         autocomplete.handleInputBlur({ relatedTarget: null })
-        expect(autocomplete.state.focused).to.equal(null)
-        expect(autocomplete.state.menuOpen).to.equal(false)
-        expect(autocomplete.state.query).to.equal('fr')
+        // Using setTimeouts here since changes in values take a while to reflect in lists
+        setTimeout(() => {
+          expect(autocomplete.state.inputFocused).to.equal(false)
+          expect(autocomplete.state.menuOpen).to.equal(false)
+          expect(autocomplete.state.query).to.equal('fr')
+          done()
+        }, 250)
       })
 
       describe('with autoselect and onConfirm', () => {
-        it('unfocuses component, updates query, triggers onConfirm', () => {
-          autoselectOnSelectAutocomplete.setState({ menuOpen: true, options: ['France'], query: 'fr', focused: -1, selected: 0 })
+        it('unfocuses component, updates query, triggers onConfirm', (done) => {
+          autoselectOnSelectAutocomplete.setState({ menuOpen: true, options: ['France'], query: 'fr', inputFocused: true, selected: 0 })
           autoselectOnSelectAutocomplete.handleInputBlur({ target: 'mock', relatedTarget: 'relatedMock' }, 0)
-          expect(autoselectOnSelectAutocomplete.state.focused).to.equal(null)
-          expect(autoselectOnSelectAutocomplete.state.menuOpen).to.equal(false)
-          expect(autoselectOnSelectAutocomplete.state.query).to.equal('France')
-          expect(onConfirmTriggered).to.equal(true)
+          // Using setTimeouts here since changes in values take a while to reflect in lists
+          setTimeout(() => {
+            expect(autoselectOnSelectAutocomplete.state.inputFocused).to.equal(false)
+            expect(autoselectOnSelectAutocomplete.state.menuOpen).to.equal(false)
+            expect(autoselectOnSelectAutocomplete.state.query).to.equal('France')
+            expect(onConfirmTriggered).to.equal(true)
+            done()
+          }, 250)
         })
       })
 
       describe('with confirmOnBlur false', () => {
-        it('unfocuses component, does not touch query, does not trigger onConfirm', () => {
-          confirmOnBlurAutocomplete.setState({ menuOpen: true, options: ['France'], query: 'fr', focused: -1, selected: 0 })
+        it('unfocuses component, does not touch query, does not trigger onConfirm', (done) => {
+          confirmOnBlurAutocomplete.setState({ menuOpen: true, options: ['France'], query: 'fr', inputFocused: true, selected: 0 })
           confirmOnBlurAutocomplete.handleInputBlur({ target: 'mock', relatedTarget: 'relatedMock' }, 0)
-          expect(confirmOnBlurAutocomplete.state.focused).to.equal(null)
-          expect(confirmOnBlurAutocomplete.state.menuOpen).to.equal(false)
-          expect(confirmOnBlurAutocomplete.state.query).to.equal('fr')
-          expect(onConfirmTriggered).to.equal(false)
+          setTimeout(() => {
+            expect(confirmOnBlurAutocomplete.state.inputFocused).to.equal(false)
+            expect(confirmOnBlurAutocomplete.state.menuOpen).to.equal(false)
+            expect(confirmOnBlurAutocomplete.state.query).to.equal('fr')
+            expect(onConfirmTriggered).to.equal(false)
+            done()
+          }, 250)
         })
       })
     })
@@ -350,16 +288,16 @@ describe('Autocomplete', () => {
       it('sets the option as focused', () => {
         autocomplete.setState({ options: ['France'] })
         autocomplete.handleOptionFocus(0)
-        expect(autocomplete.state.focused).to.equal(0)
+        expect(autocomplete.state.optionFocused).to.equal(0)
       })
     })
 
     describe('focusing out option', () => {
       describe('with input selected', () => {
         it('unfocuses component, does not change query', () => {
-          autocomplete.setState({ menuOpen: true, options: ['France'], query: 'fr', focused: 0, selected: null })
+          autocomplete.setState({ menuOpen: true, options: ['France'], query: 'fr', inputFocused: true, selected: null })
           autocomplete.handleOptionBlur({ target: 'mock', relatedTarget: 'relatedMock' }, 0)
-          expect(autocomplete.state.focused).to.equal(null)
+          expect(autocomplete.state.inputFocused).to.equal(false)
           expect(autocomplete.state.menuOpen).to.equal(false)
           expect(autocomplete.state.query).to.equal('fr')
         })
@@ -368,18 +306,18 @@ describe('Autocomplete', () => {
       describe('with option selected', () => {
         describe('with confirmOnBlur true', () => {
           it('unfocuses component, updates query', () => {
-            autocomplete.setState({ menuOpen: true, options: ['France'], query: 'fr', focused: 0, selected: 0 })
+            autocomplete.setState({ menuOpen: true, options: ['France'], query: 'fr', optionFocused: 0, selected: 0 })
             autocomplete.handleOptionBlur({ target: 'mock', relatedTarget: 'relatedMock' }, 0)
-            expect(autocomplete.state.focused).to.equal(null)
+            expect(autocomplete.state.optionFocused).to.equal(null)
             expect(autocomplete.state.menuOpen).to.equal(false)
             expect(autocomplete.state.query).to.equal('France')
           })
         })
         describe('with confirmOnBlur false', () => {
           it('unfocuses component, does not update query', () => {
-            confirmOnBlurAutocomplete.setState({ menuOpen: true, options: ['France'], query: 'fr', focused: 0, selected: 0 })
+            confirmOnBlurAutocomplete.setState({ menuOpen: true, options: ['France'], query: 'fr', optionFocused: 0, selected: 0 })
             confirmOnBlurAutocomplete.handleOptionBlur({ target: 'mock', relatedTarget: 'relatedMock' }, 0)
-            expect(confirmOnBlurAutocomplete.state.focused).to.equal(null)
+            expect(confirmOnBlurAutocomplete.state.optionFocused).to.equal(null)
             expect(confirmOnBlurAutocomplete.state.menuOpen).to.equal(false)
             expect(confirmOnBlurAutocomplete.state.query).to.equal('fr')
           })
@@ -389,20 +327,20 @@ describe('Autocomplete', () => {
 
     describe('hovering option', () => {
       it('sets the option as hovered, does not change focused, does not change selected', () => {
-        autocomplete.setState({ options: ['France'], hovered: null, focused: -1, selected: null })
+        autocomplete.setState({ options: ['France'], hovered: null, inputFocused: true, selected: null })
         autocomplete.handleOptionMouseEnter({}, 0)
         expect(autocomplete.state.hovered).to.equal(0)
-        expect(autocomplete.state.focused).to.equal(-1)
+        expect(autocomplete.state.inputFocused).to.equal(true)
         expect(autocomplete.state.selected).to.equal(null)
       })
     })
 
     describe('hovering out option', () => {
       it('sets focus back on selected, sets hovered to null', () => {
-        autocomplete.setState({ options: ['France'], hovered: 0, focused: -1, selected: null })
+        autocomplete.setState({ options: ['France'], hovered: 0, inputFocused: true, selected: null })
         autocomplete.handleListMouseLeave({ toElement: 'mock' }, 0)
         expect(autocomplete.state.hovered).to.equal(null)
-        expect(autocomplete.state.focused).to.equal(-1)
+        expect(autocomplete.state.inputFocused).to.equal(true)
         expect(autocomplete.state.selected).to.equal(null)
       })
     })
@@ -410,18 +348,19 @@ describe('Autocomplete', () => {
     describe('up key', () => {
       describe('on top option', () => {
         it('focuses the input and removes selection', () => {
-          autocomplete.setState({ menuOpen: true, options: ['France'], focused: 0 })
+          autocomplete.setState({ menuOpen: true, options: ['France'], optionFocused: 0 })
           autocomplete.handleKeyDown({ preventDefault: () => {}, keyCode: 38 })
-          expect(autocomplete.state.focused).to.equal(-1)
+          expect(autocomplete.state.inputFocused).to.equal(true)
+          expect(autocomplete.state.optionFocused).to.equal(null)
           expect(autocomplete.state.selected).to.equal(null)
         })
       })
 
       describe('options available above', () => {
         it('focuses the above option', () => {
-          autocomplete.setState({ menuOpen: true, options: ['France', 'Germany'], focused: 1, selected: 1 })
+          autocomplete.setState({ menuOpen: true, options: ['France', 'Germany'], optionFocused: 1, selected: 1 })
           autocomplete.handleKeyDown({ preventDefault: () => {}, keyCode: 38 })
-          expect(autocomplete.state.focused).to.equal(0)
+          expect(autocomplete.state.optionFocused).to.equal(0)
         })
       })
     })
@@ -429,7 +368,7 @@ describe('Autocomplete', () => {
     describe('down key', () => {
       describe('0 options available', () => {
         it('does nothing', () => {
-          autocomplete.setState({ menuOpen: false, options: [], focused: -1 })
+          autocomplete.setState({ menuOpen: false, options: [], inputFocused: true })
           const stateBefore = autocomplete.state
           autocomplete.handleKeyDown({ preventDefault: () => {}, keyCode: 40 })
           expect(autocomplete.state).to.equal(stateBefore)
@@ -438,18 +377,18 @@ describe('Autocomplete', () => {
 
       describe('1 option available', () => {
         it('focuses next element', () => {
-          autocomplete.setState({ menuOpen: true, options: ['France'], focused: -1, selected: null })
+          autocomplete.setState({ menuOpen: true, options: ['France'], optionFocused: null, selected: null })
           autocomplete.handleKeyDown({ preventDefault: () => {}, keyCode: 40 })
-          expect(autocomplete.state.focused).to.equal(0)
+          expect(autocomplete.state.optionFocused).to.equal(0)
           expect(autocomplete.state.selected).to.equal(0)
         })
       })
 
       describe('2 or more option available', () => {
         it('focuses next element', () => {
-          autocomplete.setState({ menuOpen: true, options: ['France', 'Germany'], focused: 0, selected: 0 })
+          autocomplete.setState({ menuOpen: true, options: ['France', 'Germany'], optionFocused: 0, selected: 0 })
           autocomplete.handleKeyDown({ preventDefault: () => {}, keyCode: 40 })
-          expect(autocomplete.state.focused).to.equal(1)
+          expect(autocomplete.state.optionFocused).to.equal(1)
           expect(autocomplete.state.selected).to.equal(1)
         })
       })
@@ -457,7 +396,7 @@ describe('Autocomplete', () => {
       describe('autoselect', () => {
         describe('0 options available', () => {
           it('does nothing', () => {
-            autoselectAutocomplete.setState({ menuOpen: false, options: [], focused: -1, selected: null })
+            autoselectAutocomplete.setState({ menuOpen: false, options: [], inputFocused: true, selected: null })
             const stateBefore = autoselectAutocomplete.state
             autoselectAutocomplete.handleKeyDown({ preventDefault: () => {}, keyCode: 40 })
             expect(autoselectAutocomplete.state).to.equal(stateBefore)
@@ -466,7 +405,7 @@ describe('Autocomplete', () => {
 
         describe('1 option available', () => {
           it('does nothing', () => {
-            autoselectAutocomplete.setState({ menuOpen: true, options: ['France'], focused: -1, selected: 0 })
+            autoselectAutocomplete.setState({ menuOpen: true, options: ['France'], inputFocused: true, selected: 0 })
             const stateBefore = autoselectAutocomplete.state
             autoselectAutocomplete.handleKeyDown({ preventDefault: () => {}, keyCode: 40 })
             expect(autoselectAutocomplete.state).to.equal(stateBefore)
@@ -475,9 +414,9 @@ describe('Autocomplete', () => {
 
         describe('2 or more option available', () => {
           it('on input, focuses second element', () => {
-            autoselectAutocomplete.setState({ menuOpen: true, options: ['France', 'Germany'], focused: -1, selected: 0 })
+            autoselectAutocomplete.setState({ menuOpen: true, options: ['France', 'Germany'], inputFocused: true, selected: 0 })
             autoselectAutocomplete.handleKeyDown({ preventDefault: () => {}, keyCode: 40 })
-            expect(autoselectAutocomplete.state.focused).to.equal(1)
+            expect(autoselectAutocomplete.state.optionFocused).to.equal(1)
             expect(autoselectAutocomplete.state.selected).to.equal(1)
           })
         })
@@ -486,10 +425,11 @@ describe('Autocomplete', () => {
 
     describe('escape key', () => {
       it('unfocuses component', () => {
-        autocomplete.setState({ menuOpen: true, options: ['France'], focused: -1 })
+        autocomplete.setState({ menuOpen: true, options: ['France'], inputFocused: true })
         autocomplete.handleKeyDown({ preventDefault: () => {}, keyCode: 27 })
         expect(autocomplete.state.menuOpen).to.equal(false)
-        expect(autocomplete.state.focused).to.equal(null)
+        expect(autocomplete.state.inputFocused).to.equal(false)
+        expect(autocomplete.state.optionFocused).to.equal(null)
       })
     })
 
@@ -497,11 +437,11 @@ describe('Autocomplete', () => {
       describe('on an option', () => {
         it('prevents default, closes the menu, sets the query, focuses the input, triggers onConfirm', () => {
           let preventedDefault = false
-          onConfirmAutocomplete.setState({ menuOpen: true, options: ['France'], focused: 0, selected: 0 })
+          onConfirmAutocomplete.setState({ menuOpen: true, options: ['France'], optionFocused: 0, selected: 0 })
           onConfirmAutocomplete.handleKeyDown({ preventDefault: () => { preventedDefault = true }, keyCode: 13 })
           expect(onConfirmAutocomplete.state.menuOpen).to.equal(false)
           expect(onConfirmAutocomplete.state.query).to.equal('France')
-          expect(onConfirmAutocomplete.state.focused).to.equal(-1)
+          expect(onConfirmAutocomplete.state.optionFocused).to.equal(null)
           expect(onConfirmAutocomplete.state.selected).to.equal(null)
           expect(preventedDefault).to.equal(true)
           expect(onConfirmTriggered).to.equal(true)
@@ -512,7 +452,7 @@ describe('Autocomplete', () => {
         describe('with menu opened', () => {
           it('prevents default, does nothing', () => {
             let preventedDefault = false
-            autocomplete.setState({ menuOpen: true, options: [], query: 'asd', focused: -1, selected: null })
+            autocomplete.setState({ menuOpen: true, options: [], query: 'asd', inputFocused: true, selected: null })
             const stateBefore = autocomplete.state
             autocomplete.handleKeyDown({ preventDefault: () => { preventedDefault = true }, keyCode: 13 })
             expect(autocomplete.state).to.equal(stateBefore)
@@ -523,7 +463,7 @@ describe('Autocomplete', () => {
         describe('with menu closed', () => {
           it('bubbles, does not prevent default', () => {
             let preventedDefault = false
-            autocomplete.setState({ menuOpen: false, options: ['France'], focused: -1, selected: null })
+            autocomplete.setState({ menuOpen: false, options: ['France'], inputFocused: true, selected: null })
             const stateBefore = autocomplete.state
             autocomplete.handleKeyDown({ preventDefault: () => { preventedDefault = true }, keyCode: 13 })
             expect(autocomplete.state).to.equal(stateBefore)
@@ -533,11 +473,11 @@ describe('Autocomplete', () => {
 
         describe('autoselect', () => {
           it('closes the menu, selects the first option, keeps input focused', () => {
-            autoselectAutocomplete.setState({ menuOpen: true, options: ['France'], focused: -1, selected: 0 })
+            autoselectAutocomplete.setState({ menuOpen: true, options: ['France'], inputFocused: true, selected: 0 })
             autoselectAutocomplete.handleKeyDown({ preventDefault: () => {}, keyCode: 13 })
             expect(autoselectAutocomplete.state.menuOpen).to.equal(false)
             expect(autoselectAutocomplete.state.query).to.equal('France')
-            expect(autoselectAutocomplete.state.focused).to.equal(-1)
+            expect(autoselectAutocomplete.state.inputFocused).to.equal(true)
             expect(autoselectAutocomplete.state.selected).to.equal(null)
           })
         })
@@ -548,11 +488,11 @@ describe('Autocomplete', () => {
       describe('on an option', () => {
         it('prevents default, closes the menu, sets the query, focuses the input, triggers onConfirm', () => {
           let preventedDefault = false
-          onConfirmAutocomplete.setState({ menuOpen: true, options: ['France'], focused: 0, selected: 0 })
+          onConfirmAutocomplete.setState({ menuOpen: true, options: ['France'], optionFocused: 0, selected: 0 })
           onConfirmAutocomplete.handleKeyDown({ preventDefault: () => { preventedDefault = true }, keyCode: 32 })
           expect(onConfirmAutocomplete.state.menuOpen).to.equal(false)
           expect(onConfirmAutocomplete.state.query).to.equal('France')
-          expect(onConfirmAutocomplete.state.focused).to.equal(-1)
+          expect(onConfirmAutocomplete.state.inputFocused).to.equal(true)
           expect(onConfirmAutocomplete.state.selected).to.equal(null)
           expect(preventedDefault).to.equal(true)
           expect(onConfirmTriggered).to.equal(true)
@@ -562,10 +502,10 @@ describe('Autocomplete', () => {
 
     describe('an unrecognised key', () => {
       it('does nothing', () => {
-        autocomplete.setState({ menuOpen: true, options: ['France'], focused: 0, selected: 0 })
+        autocomplete.setState({ menuOpen: true, options: ['France'], optionFocused: 0, selected: 0 })
         autocomplete.elementReferences[-1] = 'input element'
         autocomplete.handleKeyDown({ target: 'not the input element', keyCode: 4242 })
-        expect(autocomplete.state.focused).to.equal(0)
+        expect(autocomplete.state.optionFocused).to.equal(0)
         expect(autocomplete.state.selected).to.equal(0)
       })
     })
