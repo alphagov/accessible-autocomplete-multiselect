@@ -593,7 +593,7 @@ export default class Autocomplete extends Component {
           )}
         </ul>
 
-        {multiple && (
+        {multiple && selectedOptions.length > 0 && (
           <ul
             className={`${selectedOptionsClassName}`}
             id={`${id}__list`}
