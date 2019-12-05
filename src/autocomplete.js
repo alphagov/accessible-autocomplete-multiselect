@@ -600,7 +600,7 @@ export default class Autocomplete extends Component {
           >
             {selectedOptions.map((option, index) => {
               return (
-                <li id={`${id}__option--${index}`} className='autocomplete__selected-option'>
+                <li id={`${id}__selected-option--${index}`} className='autocomplete__selected-option'>
                   <span dangerouslySetInnerHTML={{ __html: this.templateSuggestion(option) }} />
                   <button
                     type='button'
