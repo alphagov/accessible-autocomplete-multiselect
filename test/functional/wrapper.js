@@ -139,7 +139,7 @@ describe('Wrapper', () => {
     const autocompleteList = autocompleteInstance.querySelector('.autocomplete__list')
     expect(autocompleteInput.tagName.toLowerCase()).to.equal('input')
     expect(autocompleteInput.id).to.equal(id)
-    expect(autocompleteList.tagName.toLowerCase()).to.equal('ul')
+    expect(autocompleteList).to.equal(null)
   })
 
   it('uses the defaultValue setting to populate the input field if no option is selected', () => {
@@ -180,7 +180,7 @@ describe('Wrapper', () => {
     const autocompleteInstances = document.querySelectorAll('.autocomplete__wrapper')
     const autocompleteInstance = autocompleteInstances[0]
 
-    const autocompleteSelectedItems = autocompleteInstance.querySelectorAll('.autocomplete__list li')
+    const autocompleteSelectedItems = autocompleteInstance.querySelectorAll('ul.autocomplete__list li.autocomplete__selected-option')
     expect(autocompleteSelectedItems.length).to.equal(2)
     expect(autocompleteSelectedItems[0].textContent).to.contain('France')
     expect(autocompleteSelectedItems[1].textContent).to.contain('Germany')

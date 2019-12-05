@@ -622,7 +622,7 @@ export default class Autocomplete extends Component {
 
         <span id={assistiveHintID} style={{ display: 'none' }}>{tAssistiveHint()}</span>
 
-        {multiple && (
+        {multiple && selectedOptions.length > 0 && (
           <ul
             className={`${selectedOptionsClassName}`}
             id={`${id}__list`}
