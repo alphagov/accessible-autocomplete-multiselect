@@ -626,7 +626,6 @@ export default class Autocomplete extends Component {
           <ul
             className={`${selectedOptionsClassName}`}
             id={`${id}__list`}
-            role='listbox'
           >
             {selectedOptions.map((option, index) => {
               return (
