@@ -593,15 +593,14 @@ export default class Autocomplete extends Component {
           )}
         </ul>
 
-        {multiple && (
+        {multiple && selectedOptions.length > 0 && (
           <ul
             className={`${selectedOptionsClassName}`}
             id={`${id}__list`}
-            role='listbox'
           >
             {selectedOptions.map((option, index) => {
               return (
-                <li id={`${id}__option--${index}`} className='autocomplete__selected-option'>
+                <li id={`${id}__selected-option--${index}`} className='autocomplete__selected-option'>
                   <span dangerouslySetInnerHTML={{ __html: this.templateSuggestion(option) }} />
                   <button
                     type='button'
