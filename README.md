@@ -9,9 +9,7 @@
 
 [![Sauce Labs Build Status](https://saucelabs.com/browser-matrix/tvararu-alphagov.svg)](https://saucelabs.com/u/tvararu-alphagov)
 
-This is a fork of the [accessible-autocomplete](https://github.com/alphagov/accessible-autocomplete) module built and maintained by the GOVUK Design System team.
-
-This fork adds additional functionality such as support for [select multiple](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select#attr-multiple).
+This is a fork of the [accessible-autocomplete](https://github.com/alphagov/accessible-autocomplete) component. It adds additional functionality such as support for [select multiple](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select#attr-multiple).
 
 `accessible-autocomplete` is a JavaScript autocomplete built from the ground up to be accessible. The design goals are:
 
