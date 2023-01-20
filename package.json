@@ -1,5 +1,5 @@
 {
-  "name": "accessible-autocomplete",
+  "name": "accessible-autocomplete-multi-select",
   "version": "1.6.2",
   "main": "dist/accessible-autocomplete.min.js",
   "style": "dist/accessible-autocomplete.min.css",

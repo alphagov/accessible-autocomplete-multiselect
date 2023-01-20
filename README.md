@@ -1,4 +1,4 @@
-# Accessible autocomplete
+# Accessible autocomplete multi select
 
 [![npm version](https://img.shields.io/npm/v/accessible-autocomplete.svg)](http://npm.im/accessible-autocomplete)
 [![Build Status](https://travis-ci.org/alphagov/accessible-autocomplete.svg?branch=master)](https://travis-ci.org/alphagov/accessible-autocomplete)
@@ -8,6 +8,8 @@
 [![gzip size](http://img.badgesize.io/https://unpkg.com/accessible-autocomplete/dist/accessible-autocomplete.min.js?compression=gzip)](https://unpkg.com/accessible-autocomplete/dist/accessible-autocomplete.min.js)
 
 [![Sauce Labs Build Status](https://saucelabs.com/browser-matrix/tvararu-alphagov.svg)](https://saucelabs.com/u/tvararu-alphagov)
+
+This is a fork of the [accessible-autocomplete](https://github.com/alphagov/accessible-autocomplete) component. It adds additional functionality such as support for [select multiple](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select#attr-multiple).
 
 `accessible-autocomplete` is a JavaScript autocomplete built from the ground up to be accessible. The design goals are:
 
