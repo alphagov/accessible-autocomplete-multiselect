@@ -137,7 +137,9 @@ export default class Autocomplete extends Component {
     const { inputFocused, optionFocused } = this.state
     if (inputFocused) {
       const inputElement = this.elementReferences['input']
-      if (inputElement !== document.activeElement) { inputElement.focus() }
+      if (inputElement !== document.activeElement) {
+        inputElement.focus()
+      }
       const notPreviouslyFocused = !prevState.inputFocused && prevState.optionFocused === null
       if (notPreviouslyFocused) {
         inputElement.setSelectionRange(0, inputElement.value.length)
@@ -230,10 +232,10 @@ export default class Autocomplete extends Component {
     if (!focusingAnOption) {
       const keepMenuOpen = menuOpen && isIosDevice()
       const newQuery = isIosDevice() ? query : this.templateInputValue(options[selected])
-      this.handleComponentBlur({
+      this.$blurInput = setTimeout(() => this.handleComponentBlur({
         menuOpen: keepMenuOpen,
         query: newQuery
-      })
+      }), 200)
     }
   }
 

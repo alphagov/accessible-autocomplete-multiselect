@@ -9,7 +9,7 @@ const isIE = browserName === 'internet explorer'
 // const isIE11 = isIE && browserVersion === '11.103'
 const liveRegionWaitTimeMillis = 10000
 
-const basicExample = () => {
+const basicExample = (runner = null) => {
   describe('basic example', function () {
     const input = 'input#autocomplete-default'
     const menu = `${input} + ul`
@@ -85,14 +85,22 @@ const basicExample = () => {
       })
     }
 
-    it('should set aria-selected to true on selected option and false on other options', () => {
+    it('should set aria-selected to true on selected option and unset aria-selected on other options', () => {
       $(input).click()
       $(input).setValue('ita')
       browser.keys(['ArrowDown'])
       expect($(firstOption).getAttribute('aria-selected')).to.equal('true')
-      expect($(secondOption).getAttribute('aria-selected')).to.equal('false')
+      if (runner === 'react') {
+        expect($(secondOption).getAttribute('aria-selected')).to.equal('false')
+      } else {
+        expect($(secondOption).getAttribute('aria-selected')).to.be.null
+      }
       browser.keys(['ArrowDown'])
-      expect($(firstOption).getAttribute('aria-selected')).to.equal('false')
+      if (runner === 'react') {
+        expect($(firstOption).getAttribute('aria-selected')).to.equal('false')
+      } else {
+        expect($(firstOption).getAttribute('aria-selected')).to.be.null
+      }
       expect($(secondOption).getAttribute('aria-selected')).to.equal('true')
     })
 
@@ -244,7 +252,7 @@ describe('Accessible Autocomplete React', () => {
     expect(browser.getTitle()).to.equal('Accessible Autocomplete React examples')
   })
 
-  basicExample()
+  basicExample('react')
 
   takeScreenshotsIfFail()
 })
