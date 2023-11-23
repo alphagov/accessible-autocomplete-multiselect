@@ -32,7 +32,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-push": "npm run build && node scripts/check-staged.js"
+      "pre-push": "npm run build && node scripts/check-staged.mjs"
     }
   },
   "dependencies": {

@@ -1,5 +1,5 @@
-const cp = require('child_process')
-const chalk = require('chalk')
+import chalk from 'chalk'
+import * as cp from 'child_process'
 
 cp.exec('git diff --name-only dist/', (err, stdout) => {
   if (err) {
