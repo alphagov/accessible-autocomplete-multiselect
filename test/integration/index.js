@@ -93,13 +93,13 @@ const basicExample = (runner = null) => {
       if (runner === 'react') {
         expect($(secondOption).getAttribute('aria-selected')).to.equal('false')
       } else {
-        expect($(secondOption).getAttribute('aria-selected')).to.be.null
+        expect($(secondOption).getAttribute('aria-selected')).to.equal(null)
       }
       browser.keys(['ArrowDown'])
       if (runner === 'react') {
         expect($(firstOption).getAttribute('aria-selected')).to.equal('false')
       } else {
-        expect($(firstOption).getAttribute('aria-selected')).to.be.null
+        expect($(firstOption).getAttribute('aria-selected')).to.equal(null)
       }
       expect($(secondOption).getAttribute('aria-selected')).to.equal('true')
     })
