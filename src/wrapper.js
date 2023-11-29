@@ -66,7 +66,7 @@ accessibleAutocomplete.enhanceSelectElement = (configurationOptions) => {
   }
   if (configurationOptions.autoselect === undefined) configurationOptions.autoselect = true
 
-  const element = document.createElement('span')
+  const element = document.createElement('div')
 
   selectElement.parentNode.insertBefore(element, selectElement)
 

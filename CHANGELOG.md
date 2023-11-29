@@ -1,6 +1,79 @@
 # CHANGELOG
 
-## [Unreleased]
+## Unreleased
+
+## 2.0.5 - 2023-04-25
+
+- [Pull request #591: Add menuAttributes to fix #361](https://github.com/alphagov/accessible-autocomplete/pull/591)
+
+## 2.0.4 - 2022-02-07
+
+### Fixes
+
+- [Pull request #512: Make sure highlighted option is distinguishable in forced colors mode](https://github.com/alphagov/accessible-autocomplete/pull/512)
+
+## 2.0.3 - 2020-07-01
+
+### Fixes
+
+- [Pull request #415: Make React bundle work server-side in a NodeJS environment](https://github.com/alphagov/accessible-autocomplete/pull/415)
+
+## 2.0.2 - 2020-01-30
+
+### Fixes
+
+- [Pull request #388: Set aria-selected as a string instead of a boolean to avoid being dropped](https://github.com/alphagov/accessible-autocomplete/pull/388).
+- [Pull request #400: Remove pointer events check](https://github.com/alphagov/accessible-autocomplete/pull/400).
+- [Pull request #406: Make hint padding match input padding](https://github.com/alphagov/accessible-autocomplete/pull/406).
+- [Pull request #407: Use a div element to wrap enhanced component](https://github.com/alphagov/accessible-autocomplete/pull/407).
+- [Pull request #410: Fix long clicks not selecting options](https://github.com/alphagov/accessible-autocomplete/pull/410).
+
+## 2.0.1 - 2019-10-07
+
+### Fixes
+
+- [Pull request #379: Ensure multiple autocompletes on one page do not have conflicting id attributes](https://github.com/alphagov/accessible-autocomplete/pull/379)
+
+## 2.0.0 - 2019-09-26
+
+We recommend you update to the latest release using npm:
+
+`npm install accessible-autocomplete@latest`
+
+### Breaking changes
+
+You must make the following change when you migrate to this release, or your service may break.
+
+#### Migrate to the new accessible focus state
+
+The focus state [now meets the new WCAG 2.1 level AA requirements](https://designnotes.blog.gov.uk/2019/07/29/weve-made-the-gov-uk-design-system-more-accessible/).
+
+You do not need to do anything if you’re using Sass.
+
+If you’ve previously copied CSS from our code into your project, you must copy all the CSS from our [`accessible-autocomplete.min.css` file](https://github.com/alphagov/accessible-autocomplete/blob/v2.0.0/dist/accessible-autocomplete.min.css) into your CSS file.
+
+If you’ve created custom CSS, you should check that your component meets WCAG 2.1 level AA requirements. You can [read how we made the GOV.UK Design System focus states accessible](https://design-system.service.gov.uk/get-started/focus-states/).
+
+[Pull request #360: Update focus styles to meet WCAG 2.1 level AA non-text contrast requirements](https://github.com/alphagov/accessible-autocomplete/pull/360).
+
+### Fixes
+
+#### Better compatibility with screen readers
+
+The input field is now visible to all screen readers, because the input field now meets the Accessible Rich Internet Applications (ARIA) 1.0 standard instead of ARIA 1.1. ARIA 1.0 is better supported by the current versions of most screen readers.
+
+Screen readers will now consistently tell users:
+
+- when users have entered too few characters in the input field
+- the correct number of search results, and what the results are
+- which result users have highlighted
+- how to use autocomplete in different screen readers - by reading hidden hint text
+
+Screen readers will also now avoid telling users information they do not need to know after they highlight an option.
+
+Thanks to [Mark Hunter](https://github.com/markhunter27), Chris Moore and everyone at HMRC who worked on these improvements.
+
+[Pull request #355: Refinements to address accessibility issues](https://github.com/alphagov/accessible-autocomplete/pull/355)
 
 ## 1.6.2 - 2018-11-13
 

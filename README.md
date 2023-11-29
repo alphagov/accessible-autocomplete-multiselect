@@ -1,10 +1,11 @@
 # Accessible autocomplete multi select
 
+The accessible autocomplete is a component that helps users choose answers from a list you provide. You can also use it to make the answers you get from users more consistent.
+
+If you're asking users to provide their country or territory, the [govuk-country-and-territory-autocomplete](https://github.com/alphagov/govuk-country-and-territory-autocomplete/blob/main/README.md) might be more appropriate.
+
 [![npm version](https://img.shields.io/npm/v/accessible-autocomplete.svg)](http://npm.im/accessible-autocomplete)
-[![Build Status](https://travis-ci.org/alphagov/accessible-autocomplete.svg?branch=master)](https://travis-ci.org/alphagov/accessible-autocomplete)
-[![Coverage Status](https://coveralls.io/repos/github/alphagov/accessible-autocomplete/badge.svg?branch=master)](https://coveralls.io/github/alphagov/accessible-autocomplete?branch=master)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
-[![Greenkeeper badge](https://badges.greenkeeper.io/alphagov/accessible-autocomplete.svg)](https://greenkeeper.io/)
 [![gzip size](http://img.badgesize.io/https://unpkg.com/accessible-autocomplete/dist/accessible-autocomplete.min.js?compression=gzip)](https://unpkg.com/accessible-autocomplete/dist/accessible-autocomplete.min.js)
 
 [![Sauce Labs Build Status](https://saucelabs.com/browser-matrix/tvararu-alphagov.svg)](https://saucelabs.com/u/tvararu-alphagov)
@@ -15,9 +16,21 @@ This is a fork of the [accessible-autocomplete](https://github.com/alphagov/acce
 
 - **Accessibility**: Following WAI-ARIA best practices and testing with assistive technologies.
 - **User experience**: Supporting a wide variety of user needs.
-- **Compatibility**: Working with as many browsers, devices, and assistive technologies as possible.
+- **Compatibility**: Working with [recommended browsers](https://www.gov.uk/service-manual/technology/designing-for-different-browsers-and-devices#browsers-to-test-in) and [assistive technologies](https://www.gov.uk/service-manual/technology/testing-with-assistive-technologies#which-assistive-technologies-to-test-with).
 
 [Try out the examples!](https://alphagov.github.io/accessible-autocomplete/examples/)
+
+---
+
+## Support
+
+The GOV.UK Design System team maintains the accessible autocomplete as a standalone component. However, we’re only able to put in minimal work to support it.
+
+[Read about our plans to maintain this component](https://github.com/alphagov/accessible-autocomplete/issues/532).
+
+[Read more about the types of support we can provide](https://github.com/alphagov/accessible-autocomplete/issues/430).
+
+---
 
 ## Installation / usage
 
@@ -172,6 +185,12 @@ function suggest (query, populateResults) {
 
 ### Other options
 
+#### `menuAttributes` (default: `{}`)
+
+Type: `Object`
+
+Sets html attributes and their values on the `menu`. Useful for adding `aria-labelledby` and setting to the value of the `id` attribute on your existing label, to provide context to an assistive technology user.
+
 #### `autoselect` (default: `false`)
 
 Type: `Boolean`
@@ -228,7 +247,7 @@ Type: `string`
 
 This option will populate the `placeholder` attribute on the input element.
 
-We think [placeholders have usability issues](http://adamsilver.io/articles/placeholders-are-problematic/) and that there are [better alternatives to input placeholder text](https://govuk-elements.herokuapp.com/form-elements/#form-hint-text), so we do not recommend using this option.
+We think [placeholders have usability issues](http://adamsilver.io/articles/placeholders-are-problematic/) and that there are [better alternatives to input placeholder text](https://design-system.service.gov.uk/components/text-input/#hint-text), so we do not recommend using this option.
 
 #### `required` (default: `false`)
 
@@ -265,9 +284,13 @@ This object defines templates (functions) that are used for displaying parts of 
 
 `inputValue` is a function that receives one argument, the currently selected suggestion. It returns the string value to be inserted into the input.
 
-`suggestion` is a function that receives one argument, a suggestion to be displayed. It is used when rendering suggestions, and should return a string, which can contain HTML. :warning: **Caution:** because this function allows you to output arbitrary HTML, you should [make sure it's trusted](https://en.wikipedia.org/wiki/Cross-site_scripting), and accessible.
+`suggestion` is a function that receives one argument, a suggestion to be displayed. It is used when rendering suggestions, and should return a string, which can contain HTML.
 
-#### `dropdownArrow` (default: A rectangle pointing down)
+:warning: **Caution:** because this function allows you to output arbitrary HTML, you should [make sure it's trusted](https://en.wikipedia.org/wiki/Cross-site_scripting), and accessible.
+
+If your template includes child elements with defined foreground or background colours, check they display correctly in forced colors modes. For example, Windows high contrast mode.
+
+#### `dropdownArrow` (default: A triangle pointing down)
 
 Type: `Function`
 
@@ -281,19 +304,19 @@ Type: `Function`
 
 A function that receives no arguments and should return the text used in the dropdown to indicate that there are no results.
 
-#### `tStatusQueryTooShort` (default: `` (minQueryLength) => `Type in ${minQueryLength} or more characters for results.` ``)
+#### `tStatusQueryTooShort` (default: `` (minQueryLength) => `Type in ${minQueryLength} or more characters for results` ``)
 
 Type: `Function`
 
 A function that receives one argument that indicates the minimal amount of characters needed for the dropdown to trigger and should return the text used in the accessibility hint to indicate that the query is too short.
 
-#### `tStatusNoResults` (default: `() => 'No search results.'`)
+#### `tStatusNoResults` (default: `() => 'No search results'`)
 
 Type: `Function`
 
 A function that receives no arguments and should return the text that is used in the accessibility hint to indicate that there are no results.
 
-#### `tStatusSelectedOption` (default: `` (selectedOption, length, index) => `${selectedOption} (${index + 1} of ${length}) is selected.` ``)
+#### `tStatusSelectedOption` (default: `` (selectedOption, length, index) => `${selectedOption} ${index + 1} of ${length} is highlighted` ``)
 
 Type: `Function`
 
@@ -317,6 +340,14 @@ Default:
 Type: `Function`
 
 A function that receives two arguments, the count of available options and the return value of `tStatusSelectedOption`, and should return the text used in the accessibility hint to indicate which options are available and which is selected.
+
+#### `tAssistiveHint` (default: `() => 'When autocomplete results are available use up and down arrows to review and enter to select.  Touch device users, explore by touch or with swipe gestures.'`)
+
+Type: `Function`
+
+A function that receives no arguments and should return the text to be assigned as the aria description of the html `input` element, via the `aria-describedby` attribute.
+This text is intended as an initial instruction to the assistive tech user. The `aria-describedby` attribute is automatically removed once user input is detected, in order to reduce screen reader verbosity.
+
 
 ## Progressive enhancement
 
@@ -380,7 +411,7 @@ accessibleAutocomplete.enhanceSelectElement({
 })
 ```
 
-Any null options will also be filtered out of the options used to populate the `source` of the autocomplete element. To preserve options with no value in the autcomplete then pass a `preserveNullOptions` flag of `true` to `enhanceSelectElement`.
+Any null options will also be filtered out of the options used to populate the `source` of the autocomplete element. To preserve options with no value in the autocomplete, then pass a `preserveNullOptions` flag of `true` to `enhanceSelectElement`.
 
 ## Analytics and tracking
 

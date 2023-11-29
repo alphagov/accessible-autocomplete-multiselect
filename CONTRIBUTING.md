@@ -35,7 +35,6 @@ brew cask install java
 
 ```
 $ ls
-coverage/    # Gets outputted by the tests, `open html/src/index.html` to see latest coverage reports.
 dist/        # The compiled and ready to distribute build artefacts.
 screenshots/ # Gets outputted by the end to end tests when something goes wrong.
 examples/    # GitHub pages examples of using the autocomplete.
@@ -103,7 +102,7 @@ You should do this and commit it before you attempt to `git push`, otherwise the
 
 ## Prepush checks
 
-When you push to a branch, git will run a `npm run prepush` [script](scripts/check-staged.js) that will compile the build on your behalf to the `dist/` folder. If it then finds unstaged files in `dist/`, it will fail your push.
+When you push to a branch, git will run a `npm run prepush` [script](scripts/check-staged.mjs) that will compile the build on your behalf to the `dist/` folder. If it then finds unstaged files in `dist/`, it will fail your push.
 
 The solution is to commit the files, preferably as part of a separate commit:
 
@@ -138,13 +137,33 @@ npm version <major|minor|patch> -m "## 1.2.3 - 2017-01-13
 
 - Change included in this release
 - Another change included in this release"
+```
+
+Then run:
+```bash
 git push --tags --set-upstream origin refs/heads/v1.2.3:refs/heads/v1.2.3
 ```
 
-To actually publish, you will need access to an `npm` account that owns `accessible-autocomplete`. Merge the version PR and then run:
+Create a pull request for the release and merge once it has been approved, then run:
 
 ```bash
-git checkout master
+git checkout main
 git pull --rebase
-npm publish
 ```
+
+### Publish the release
+
+  1. Sign in to npm (`npm login`) as `govuk-patterns-and-tools` using the credentials from BitWarden.
+  2. Run `npm publish` to publish to npm.
+  3. Open the ['create a new release' dialog](https://github.com/alphagov/accessible-autocomplete/releases/new) on GitHub.
+  4. Select the latest tag version.
+  5. Set 'v[VERSION-NUMBER]' as the title.
+  6. Add the release notes from the changelog.
+  7. Add a summary of highlights.
+  8. Select **Publish release**.
+
+You do not need to manually attach source code files to the release on GitHub.
+
+Post a short summary of the release in the cross-government and GDS #govuk-design-system Slack channels. For example:
+
+🚀 We’ve just released Accessible Autocomplete v2.0.1. You can now use the acccessible autocomplete multiple times on one page. Thanks to @<SLACK-NAME> and @<SLACK-NAME> for helping with this release. [https://github.com/alphagov/accessible-autocomplete/releases/tag/v2.0.1](https://github.com/alphagov/accessible-autocomplete/releases/tag/v2.0.1)
