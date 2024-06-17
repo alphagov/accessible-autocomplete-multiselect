@@ -314,6 +314,9 @@ export default class Autocomplete extends Component {
           selectedOptions: this.state.selectedOptions.concat([selectedOption])
         })
       }
+      this.setState({
+        inputFocused: true,
+      })
     } else {
       this.setState({
         inputFocused: true,
@@ -470,7 +473,8 @@ export default class Autocomplete extends Component {
       tSelectedOptionDescription,
       dropdownArrow: dropdownArrowFactory,
       customAttributes,
-      menuAttributes
+      menuAttributes,
+      tabIndex
     } = this.props
     const {
       inputFocused,
@@ -636,6 +640,7 @@ export default class Autocomplete extends Component {
                   <button
                     type='button'
                     className='autocomplete__remove-option'
+                    tabIndex={tabIndex}
                     aria-label={`${this.templateSuggestion(option)}, selected. ${tSelectedOptionDescription()}`}
                     onClick={(event) => this.handleRemoveSelectedOptionClick(event, index)}>remove</button>
                 </li>
