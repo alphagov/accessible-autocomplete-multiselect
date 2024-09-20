@@ -326,7 +326,7 @@ export default class Autocomplete extends Component {
         })
       }
       this.setState({
-        inputFocused: true,
+        inputFocused: true
       })
     } else {
       this.setState({
