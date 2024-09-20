@@ -31,6 +31,7 @@ accessibleAutocomplete.enhanceSelectElement = (configurationOptions) => {
     configurationOptions.multiple = true
     configurationOptions.confirmOnBlur = false
     configurationOptions.showNoOptionsFound = false
+    configurationOptions.tabIndex = selectElement.tabIndex
     configurationOptions.selectedOptions = selectableOptions.filter(option => option.selected).map(option => option.textContent)
     configurationOptions.onRemove = configurationOptions.onRemove || (value => {
       const optionToRemove = [].filter.call(configurationOptions.selectElement.options, option => (option.textContent || option.innerText) === value)[0]
