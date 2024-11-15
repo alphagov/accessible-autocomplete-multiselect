@@ -1,4 +1,8 @@
-# Accessible autocomplete multi select
+# Accessible autocomplete multi select (DEPRECATED)
+
+> **NOTE**: This project is deprecated and is [planned to be retired](https://trello.com/c/zLNLSKok/85-design-accessible-replacement-for-accessible-autocomplete-multiselect).
+
+---
 
 The accessible autocomplete is a component that helps users choose answers from a list you provide. You can also use it to make the answers you get from users more consistent.
 
