@@ -9,14 +9,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Read node version from .nvmrc
         id: nvm
         run: echo "##[set-output name=NVMRC;]$(cat .nvmrc)"
 
       - name: "Setup Node v${{ steps.nvm.outputs.NVMRC }}"
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: "${{ steps.nvm.outputs.NVMRC }}"
           cache: 'npm'
