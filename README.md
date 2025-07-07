@@ -1,6 +1,8 @@
-# Accessible autocomplete multi select (DEPRECATED)
+# Accessible autocomplete multi select (RETIRED)
 
-> **NOTE**: This project is deprecated and is [planned to be retired](https://trello.com/c/zLNLSKok/85-design-accessible-replacement-for-accessible-autocomplete-multiselect).
+> **NOTE**: This project is retired as the component is not accessible.
+>
+> Similar functionality is now provided by the [Multiple](https://components.publishing.service.gov.uk/component-guide/select_with_search#with_multiple_select_enabled) variant of the [Select With Search](https://components.publishing.service.gov.uk/component-guide/select_with_search) component, which is available in the [govuk_publishing_components](https://github.com/alphagov/govuk_publishing_components) gem.
 
 ---
 
